@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlockVote</title>
+  <link rel="shortcut icon" href="img/favicon.svg" type="image/x-icon">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Arimo&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Arimo', sans-serif;
+      color: black;
+      background-image: url('https://images.unsplash.com/photo-1508738270774-28e812b39656');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      background-color: rgba(255, 255, 255, 0.8);
+      color: black;
+    }
+
+    .btn-vote {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+
+    .btn-vote:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }
+
+    .candidate-table td {
+      background-color: #f8f9fa;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="card-body">
+        <h1 class="text-center mb-4">BlockVote</h1>
+        <div class="row">
+          <div class="col-lg-6">
+            <img src="https://image.flaticon.com/icons/svg/927/927250.svg" class="img-fluid" alt="">
+          </div>
+          <div class="col-lg-6">
+            <table class="table table-responsive table-borderless table-hover candidate-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Candidate Name</th>
+                  <th>Age</th>
+                  <th>Address</th>
+                  <th>Party</th>
+                  <th>Gender</th>
+                  <th>Votes</th>
+                </tr>
+              </thead>
+              <tbody id="candidatesResults">
+                <!-- Add fictional candidate data here -->
+                <tr>
+                  <td>1</td>
+                  <td>Aniket Ojha</td>
+                  <td>28</td>
+                  <td>Thane</td>
+                  <td>INC</td>
+                  <td>Male</td>
+                  <td id="candidate1Votes">550</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Pratham Nanaware</td>
+                  <td>28</td>
+                  <td>Thane</td>
+                  <td>BJP</td>
+                  <td>Male</td>
+                  <td id="candidate2Votes">445</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Rohan Nashikkar</td>
+                  <td>78</td>
+                  <td>Thane</td>
+                  <td>AAP</td>
+                  <td>Male</td>
+                  <td id="candidate3Votes">485</td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>Soham Pavale</td>
+                  <td>26</td>
+                  <td>Thane</td>
+                  <td>ShivSena</td>
+                  <td>Male</td>
+                  <td id="candidate4Votes">550</td>
+                </tr>
+              </tbody>
+            </table>
+            <hr>
+            <form id="voteForm">
+              <div class="form-group">
+                <label for="candidatesSelect">Select Candidate</label>
+                <select class="form-control" id="candidatesSelect">
+                  <option value="1">Aniket Ojha</option>
+                  <option value="2">Pratham Nanaware</option>
+                  <option value="3">Rohan Nashikkar</option>
+                  <option value="4">Soham Pavale</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block btn-vote">Vote</button>
+            </form>
+            <p id="accountAddress" class="text-center mt-3"></p>
+          </div>
+        </div>
+        <div class="row" id="vote-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <script src="js/web3.min.js"></script>
+  <script src="js/truffle-contract.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    window.addEventListener('load', async () => {
+      if (typeof web3 !== 'undefined') {
+        // Check if MetaMask is installed and connected
+        if (web3.currentProvider.isMetaMask) {
+          // MetaMask is active
+          console.log('MetaMask is active');
+          const accounts = await ethereum.request({ method: 'eth_accounts' });
+          if (accounts.length > 0) {
+            $('#accountAddress').text('Connected Account: ' + accounts[0]);
+          } else {
+            $('#accountAddress').text('Please connect your MetaMask account');
+          }
+        } else {
+          // MetaMask is not installed or not connected
+          $('#check-web3').html(`<div class="alert alert-danger text-center" role="alert">
+              <span>Please Install Metamask for voting</span>
+            </div>`);
+        }
+      } else {
+        // web3 is not found
+        console.log('web3 is not found');
+      }
+    });
+
+    // Increment vote count when Vote button is clicked
+    $('#voteForm').submit(function (event) {
+      event.preventDefault();
+      const candidateId = $('#candidatesSelect').val();
+      const candidateVotes = parseInt($('#candidate' + candidateId + 'Votes').text());
+      $('#candidate' + candidateId + 'Votes').text(candidateVotes + 1);
+    });
+  </script>
+</body>
+
+</html>
